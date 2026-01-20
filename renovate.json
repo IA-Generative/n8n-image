@@ -10,6 +10,9 @@
   "ignorePaths": [
     "**/node_modules/**"
   ],
+  "npm": {
+    "enabled": true
+  },
   "packageRules": [
     {
       "matchCategories": [
@@ -205,6 +208,7 @@
   ],
   "assignees": [],
   "reviewers": [],
+  "recreateClosed": true,
   "commitMessageAction": "Update",
   "commitMessagePrefix": "⬆️ ",
   "rebaseWhen": "behind-base-branch",
