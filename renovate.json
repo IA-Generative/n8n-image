@@ -1,0 +1,150 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "enabledManagers": [
+    "dockerfile",
+    "npm"
+  ],
+  "docker": {
+    "enabled": true,
+    "automerge": true,
+    "major": {
+      "automerge": false
+    }
+  },
+  "packageRules": [
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "n8nio/n8n"
+      ],
+      "groupName": "n8n base image",
+      "automerge": true,
+      "schedule": [
+        "before 6am on monday"
+      ],
+      "commitMessagePrefix": "⬆️ ",
+      "commitMessageTopic": "n8n base image",
+      "commitMessageExtra": "to {{newVersion}}",
+      "labels": [
+        "dependencies",
+        "docker",
+        "automerge"
+      ],
+      "assignees": [
+        "@IA-Generative"
+      ],
+      "prPriority": 10,
+      "minimumReleaseAge": "3 days",
+      "patch": {
+        "automerge": true
+      },
+      "minor": {
+        "automerge": true
+      },
+      "major": {
+        "automerge": false
+      }
+    },
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "n8nio/n8n-runners"
+      ],
+      "groupName": "n8n-runners base image",
+      "automerge": true,
+      "schedule": [
+        "before 6am on monday"
+      ],
+      "commitMessagePrefix": "⬆️ ",
+      "commitMessageTopic": "n8n-runners base image",
+      "commitMessageExtra": "to {{newVersion}}",
+      "labels": [
+        "dependencies",
+        "docker",
+        "automerge"
+      ],
+      "assignees": [
+        "@IA-Generative"
+      ],
+      "prPriority": 10,
+      "minimumReleaseAge": "3 days",
+      "patch": {
+        "automerge": true
+      },
+      "minor": {
+        "automerge": true
+      },
+      "major": {
+        "automerge": false
+      }
+    },
+    {
+      "matchDatasources": [
+        "npm"
+      ],
+      "matchPackagePatterns": [
+        "@opentelemetry/*",
+        "winston"
+      ],
+      "groupName": "OpenTelemetry dependencies",
+      "schedule": [
+        "before 6am on monday"
+      ],
+      "commitMessagePrefix": "⬆️ ",
+      "labels": [
+        "dependencies",
+        "npm"
+      ],
+      "automerge": true,
+      "patch": {
+        "automerge": true
+      },
+      "minor": {
+        "automerge": true
+      },
+      "major": {
+        "automerge": false
+      }
+    },
+    {
+      "matchDatasources": [
+        "npm"
+      ],
+      "matchPackageNames": [
+        "n8n-nodes-imap"
+      ],
+      "groupName": "n8n custom nodes",
+      "schedule": [
+        "before 6am on monday"
+      ],
+      "commitMessagePrefix": "⬆️ ",
+      "labels": [
+        "dependencies",
+        "npm",
+        "n8n-nodes"
+      ],
+      "automerge": true
+    }
+  ],
+  "prConcurrentLimit": 3,
+  "prCreation": "immediate",
+  "prHourlyLimit": 2,
+  "timezone": "Europe/Paris",
+  "labels": [
+    "dependencies"
+  ],
+  "assignees": [],
+  "reviewers": [],
+  "commitMessageAction": "Update",
+  "commitMessagePrefix": "⬆️ ",
+  "rebaseWhen": "behind-base-branch",
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "🤖 Dependency Updates Dashboard"
+}

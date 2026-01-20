@@ -14,6 +14,11 @@ RUN echo "Installing required packages..." && \
     echo "Curl installed successfully: $(curl --version | head -n 1)" && \
     echo "Envsubst installed successfully: $(envsubst --version | head -n 1)"
 
+WORKDIR /home/node/.n8n/nodes
+
+RUN npm install \
+    n8n-nodes-imap@2.14.1
+
 # Switch to n8n's installation directory
 WORKDIR /usr/local/lib/node_modules/n8n
 
@@ -32,8 +37,11 @@ RUN npm install -g \
     winston \
     flat
 
-COPY tracing.js n8n-otel-instrumentation.js /usr/local/lib/node_modules/n8n/
+COPY ../tracing.js ../n8n-otel-instrumentation.js /usr/local/lib/node_modules/n8n/
 
 ENV NODE_OPTIONS="-r @opentelemetry/auto-instrumentations-node/register -r /usr/local/lib/node_modules/n8n/tracing.js"
 
 USER node
+
+# Set image repository label
+LABEL org.opencontainers.image.source="https://github.com/IA-Generative/n8n"
