@@ -208,7 +208,7 @@
   ],
   "assignees": [],
   "reviewers": [],
-  "recreateClosed": true,
+  "recreateWhen": "always",
   "commitMessageAction": "Update",
   "commitMessagePrefix": "⬆️ ",
   "rebaseWhen": "behind-base-branch",
