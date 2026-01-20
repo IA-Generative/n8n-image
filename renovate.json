@@ -196,9 +196,9 @@
       }
     }
   ],
-  "prConcurrentLimit": 3,
+  "prConcurrentLimit": 11,
   "prCreation": "immediate",
-  "prHourlyLimit": 2,
+  "prHourlyLimit": 10,
   "timezone": "Europe/Paris",
   "labels": [
     "dependencies"
