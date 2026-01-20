@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:recommended"
   ],
   "enabledManagers": [
     "dockerfile",
@@ -10,14 +10,17 @@
   "ignorePaths": [
     "**/node_modules/**"
   ],
-  "docker": {
-    "enabled": true,
-    "automerge": false,
-    "major": {
-      "automerge": false
-    }
-  },
   "packageRules": [
+    {
+      "matchCategories": [
+        "docker"
+      ],
+      "enabled": true,
+      "automerge": false,
+      "major": {
+        "automerge": false
+      }
+    },
     {
       "description": "n8n base image in n8n/Dockerfile",
       "matchDatasources": [
@@ -89,11 +92,8 @@
       "matchDatasources": [
         "npm"
       ],
-      "matchFiles": [
+      "matchFileNames": [
         "global/package.json"
-      ],
-      "matchPackagePatterns": [
-        "@opentelemetry/*"
       ],
       "groupName": "OpenTelemetry dependencies (global)",
       "schedule": [
@@ -118,14 +118,17 @@
       },
       "major": {
         "automerge": false
-      }
+      },
+      "matchPackageNames": [
+        "/@opentelemetry/*/"
+      ]
     },
     {
       "description": "Winston and Flat utilities in global/package.json",
       "matchDatasources": [
         "npm"
       ],
-      "matchFiles": [
+      "matchFileNames": [
         "global/package.json"
       ],
       "matchPackageNames": [
@@ -162,7 +165,7 @@
       "matchDatasources": [
         "npm"
       ],
-      "matchFiles": [
+      "matchFileNames": [
         "nodes/package.json"
       ],
       "matchPackageNames": [
