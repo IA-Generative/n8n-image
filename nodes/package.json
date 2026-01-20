@@ -4,6 +4,6 @@
   "description": "Nodes dependencies for n8n",
   "private": true,
   "dependencies": {
-    "n8n-nodes-imap": "2.14.1"
+    "n8n-nodes-imap": "2.14.0"
   }
 }
