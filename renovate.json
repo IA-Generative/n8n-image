@@ -164,6 +164,7 @@
       }
     },
     {
+      "enabled": true,
       "description": "n8n custom nodes in nodes/package.json",
       "matchDatasources": [
         "npm"
