@@ -7,6 +7,9 @@
     "dockerfile",
     "npm"
   ],
+  "ignorePaths": [
+    "**/node_modules/**"
+  ],
   "docker": {
     "enabled": true,
     "automerge": false,
@@ -16,6 +19,7 @@
   },
   "packageRules": [
     {
+      "description": "n8n base image in n8n/Dockerfile",
       "matchDatasources": [
         "docker"
       ],
@@ -33,10 +37,7 @@
       "labels": [
         "dependencies",
         "docker",
-        "automerge"
-      ],
-      "assignees": [
-        "@IA-Generative"
+        "n8n"
       ],
       "prPriority": 10,
       "minimumReleaseAge": "3 days",
@@ -51,11 +52,12 @@
       }
     },
     {
+      "description": "n8n-runners base image in n8n-runners/Dockerfile",
       "matchDatasources": [
         "docker"
       ],
       "matchPackageNames": [
-        "n8nio/n8n-runners"
+        "n8nio/runners"
       ],
       "groupName": "n8n-runners base image",
       "automerge": false,
@@ -68,10 +70,7 @@
       "labels": [
         "dependencies",
         "docker",
-        "automerge"
-      ],
-      "assignees": [
-        "@IA-Generative"
+        "n8n-runners"
       ],
       "prPriority": 10,
       "minimumReleaseAge": "3 days",
@@ -86,23 +85,31 @@
       }
     },
     {
+      "description": "OpenTelemetry dependencies in global/package.json",
       "matchDatasources": [
         "npm"
       ],
-      "matchPackagePatterns": [
-        "@opentelemetry/*",
-        "winston"
+      "matchFiles": [
+        "global/package.json"
       ],
-      "groupName": "OpenTelemetry dependencies",
+      "matchPackagePatterns": [
+        "@opentelemetry/*"
+      ],
+      "groupName": "OpenTelemetry dependencies (global)",
       "schedule": [
         "before 6am on monday"
       ],
       "commitMessagePrefix": "⬆️ ",
+      "commitMessageTopic": "OpenTelemetry dependencies",
+      "commitMessageExtra": "in global/package.json",
       "labels": [
         "dependencies",
-        "npm"
+        "npm",
+        "opentelemetry",
+        "global"
       ],
       "automerge": false,
+      "minimumReleaseAge": "3 days",
       "patch": {
         "automerge": true
       },
@@ -114,8 +121,49 @@
       }
     },
     {
+      "description": "Winston and Flat utilities in global/package.json",
       "matchDatasources": [
         "npm"
+      ],
+      "matchFiles": [
+        "global/package.json"
+      ],
+      "matchPackageNames": [
+        "winston",
+        "flat"
+      ],
+      "groupName": "Utility dependencies (global)",
+      "schedule": [
+        "before 6am on monday"
+      ],
+      "commitMessagePrefix": "⬆️ ",
+      "commitMessageTopic": "Utility dependencies",
+      "commitMessageExtra": "in global/package.json",
+      "labels": [
+        "dependencies",
+        "npm",
+        "utilities",
+        "global"
+      ],
+      "automerge": false,
+      "minimumReleaseAge": "7 days",
+      "patch": {
+        "automerge": true
+      },
+      "minor": {
+        "automerge": true
+      },
+      "major": {
+        "automerge": false
+      }
+    },
+    {
+      "description": "n8n custom nodes in nodes/package.json",
+      "matchDatasources": [
+        "npm"
+      ],
+      "matchFiles": [
+        "nodes/package.json"
       ],
       "matchPackageNames": [
         "n8n-nodes-imap"
@@ -125,17 +173,23 @@
         "before 6am on monday"
       ],
       "commitMessagePrefix": "⬆️ ",
+      "commitMessageTopic": "n8n custom nodes",
+      "commitMessageExtra": "to {{newVersion}}",
       "labels": [
         "dependencies",
         "npm",
         "n8n-nodes"
       ],
       "automerge": false,
+      "minimumReleaseAge": "3 days",
       "patch": {
         "automerge": true
       },
       "minor": {
         "automerge": true
+      },
+      "major": {
+        "automerge": false
       }
     }
   ],

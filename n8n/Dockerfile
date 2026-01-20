@@ -14,28 +14,13 @@ RUN echo "Installing required packages..." && \
     echo "Curl installed successfully: $(curl --version | head -n 1)" && \
     echo "Envsubst installed successfully: $(envsubst --version | head -n 1)"
 
-WORKDIR /home/node/.n8n/nodes
-
-RUN npm install \
-    n8n-nodes-imap@2.14.1
+COPY ../nodes/ /home/node/.n8n/nodes/node_modules
 
 # Switch to n8n's installation directory
 WORKDIR /usr/local/lib/node_modules/n8n
 
-# Install Node.js OpenTelemetry dependencies locally to n8n
-RUN npm install -g \
-    @opentelemetry/api \
-    @opentelemetry/sdk-node \
-    @opentelemetry/auto-instrumentations-node \
-    @opentelemetry/exporter-trace-otlp-http \
-    @opentelemetry/exporter-logs-otlp-http \
-    @opentelemetry/resources \
-    @opentelemetry/semantic-conventions \
-    @opentelemetry/instrumentation \
-    @opentelemetry/instrumentation-winston \
-    @opentelemetry/winston-transport \
-    winston \
-    flat
+COPY ../global/* .
+RUN sh install_global.sh
 
 COPY ../tracing.js ../n8n-otel-instrumentation.js /usr/local/lib/node_modules/n8n/
 
@@ -44,4 +29,4 @@ ENV NODE_OPTIONS="-r @opentelemetry/auto-instrumentations-node/register -r /usr/
 USER node
 
 # Set image repository label
-LABEL org.opencontainers.image.source="https://github.com/IA-Generative/n8n"
+LABEL org.opencontainers.image.source="https://github.com/ia-generative/n8n"
