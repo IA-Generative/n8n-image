@@ -9,7 +9,7 @@
   ],
   "docker": {
     "enabled": true,
-    "automerge": true,
+    "automerge": false,
     "major": {
       "automerge": false
     }
@@ -23,7 +23,7 @@
         "n8nio/n8n"
       ],
       "groupName": "n8n base image",
-      "automerge": true,
+      "automerge": false,
       "schedule": [
         "before 6am on monday"
       ],
@@ -58,7 +58,7 @@
         "n8nio/n8n-runners"
       ],
       "groupName": "n8n-runners base image",
-      "automerge": true,
+      "automerge": false,
       "schedule": [
         "before 6am on monday"
       ],
@@ -102,7 +102,7 @@
         "dependencies",
         "npm"
       ],
-      "automerge": true,
+      "automerge": false,
       "patch": {
         "automerge": true
       },
@@ -130,7 +130,13 @@
         "npm",
         "n8n-nodes"
       ],
-      "automerge": true
+      "automerge": false,
+      "patch": {
+        "automerge": true
+      },
+      "minor": {
+        "automerge": true
+      }
     }
   ],
   "prConcurrentLimit": 3,
