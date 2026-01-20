@@ -9,7 +9,8 @@ on:
       - 'n8n/**'
       - 'n8n-runners/**'
       - '*.js'
-      - 'package.json'
+      - '**/package.json'
+      - '**/package-lock.json'
       - '.github/workflows/build-images.yml'
   workflow_dispatch:
   schedule:
