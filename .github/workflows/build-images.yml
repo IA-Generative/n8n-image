@@ -49,6 +49,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      - name: Install nodes dependencies
+        run: |
+          cd nodes
+          npm install
+      
       - name: Extract version from Dockerfile
         id: version
         run: |
