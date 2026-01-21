@@ -17,16 +17,16 @@ RUN echo "Installing required packages..." && \
 COPY ../nodes/ /home/node/.n8n/nodes
 RUN [[ -d /home/node/.n8n/nodes/node_modules ]] || exit 1
 
-# Switch to n8n's installation directory
-WORKDIR /usr/local/lib/node_modules/n8n
+# # Switch to n8n's installation directory
+# WORKDIR /usr/local/lib/node_modules/n8n
 
-COPY ../global/* .
+# COPY ../global/*.json ../global/*.sh ./
 # RUN sh install_global.sh
 
-COPY ../tracing.js ../n8n-otel-instrumentation.js /usr/local/lib/node_modules/n8n/
+# COPY ../tracing.js ../n8n-otel-instrumentation.js /usr/local/lib/node_modules/n8n/
+# WORKDIR /home/node
 
 USER node
-WORKDIR /home/node
 
 # Set image repository label
 LABEL org.opencontainers.image.source="https://github.com/ia-generative/n8n"
