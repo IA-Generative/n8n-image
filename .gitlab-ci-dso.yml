@@ -1,0 +1,107 @@
+include:
+  - project: $CATALOG_PATH
+    file: vault-ci.yml
+    ref: main
+  - project: $CATALOG_PATH
+    file: kaniko-ci.yml
+    ref: main
+
+default:
+  image: alpine:latest
+
+variables:
+  REGISTRY_URL: ${REGISTRY_HOST}/${PROJECT_PATH}
+
+stages:
+  - read-secret
+  - prepare
+  - extract-version
+  - docker-build
+
+read_secret:
+  stage: read-secret
+  extends:
+    - .vault:read_secret
+
+prepare-nodes:
+  stage: prepare
+  image: node:22-alpine
+  script:
+    - cd nodes
+    - npm install
+  artifacts:
+    paths:
+      - nodes/node_modules
+    expire_in: 1 hour
+  cache:
+    key:
+      files:
+        - nodes/package-lock.json
+    paths:
+      - nodes/node_modules
+
+extract-version-n8n:
+  stage: extract-version
+  image: alpine:latest
+  script:
+    - apk add --no-cache grep
+    - VERSION=$(grep -oP '^FROM.*:\K[0-9]+\.[0-9]+\.[0-9]+' n8n/Dockerfile)
+    - echo "N8N_VERSION=$VERSION" > version-n8n.env
+    - echo "N8N_VERSION_SHA=${VERSION}-${CI_COMMIT_SHORT_SHA}" >> version-n8n.env
+    - echo "Extracted n8n version:" $VERSION
+  artifacts:
+    reports:
+      dotenv: version-n8n.env
+    expire_in: 1 hour
+
+extract-version-runners:
+  stage: extract-version
+  image: alpine:latest
+  script:
+    - apk add --no-cache grep
+    - VERSION=$(grep -oP '^FROM.*:\K[0-9]+\.[0-9]+\.[0-9]+' n8n-runners/Dockerfile)
+    - echo "RUNNERS_VERSION=$VERSION" > version-runners.env
+    - echo "RUNNERS_VERSION_SHA=${VERSION}-${CI_COMMIT_SHORT_SHA}" >> version-runners.env
+    - echo "Extracted runners version:" $VERSION
+  artifacts:
+    reports:
+      dotenv: version-runners.env
+    expire_in: 1 hour
+
+build-n8n:
+  variables:
+    WORKING_DIR: ./n8n
+    DOCKERFILE: ./n8n/Dockerfile
+    IMAGE_NAMES: n8n:${N8N_VERSION} n8n:${N8N_VERSION_SHA} n8n:latest
+    EXTRA_BUILD_ARGS: --registry-mirror ${REGISTRY_MIRROR}
+  stage: docker-build
+  needs:
+    - read_secret
+    - prepare-nodes
+    - extract-version-n8n
+  extends:
+    - .kaniko:build-push
+  # Triggers job only if a file in the n8n directory or nodes directory changed in current commit
+  # rules:
+  #   - changes:
+  #     - n8n/**/*
+  #     - nodes/**/*
+
+build-n8n-runners:
+  variables:
+    WORKING_DIR: ./n8n-runners
+    DOCKERFILE: ./n8n-runners/Dockerfile
+    IMAGE_NAMES: n8n-runners:${RUNNERS_VERSION} n8n-runners:${RUNNERS_VERSION_SHA} n8n-runners:latest
+    EXTRA_BUILD_ARGS: --registry-mirror ${REGISTRY_MIRROR}
+  stage: docker-build
+  needs:
+    - read_secret
+    - prepare-nodes
+    - extract-version-runners
+  extends:
+    - .kaniko:build-push
+  # Triggers job only if a file in the n8n-runners directory or nodes directory changed in current commit
+  # rules:
+  #   - changes:
+  #     - n8n-runners/**/*
+  #     - nodes/**/*
