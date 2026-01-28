@@ -5,15 +5,15 @@
   "private": true,
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
-    "@opentelemetry/sdk-node": "^0.210.0",
-    "@opentelemetry/auto-instrumentations-node": "^0.68.0",
-    "@opentelemetry/exporter-trace-otlp-http": "^0.210.0",
-    "@opentelemetry/exporter-logs-otlp-http": "^0.210.0",
+    "@opentelemetry/sdk-node": "^0.211.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.69.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.211.0",
+    "@opentelemetry/exporter-logs-otlp-http": "^0.211.0",
     "@opentelemetry/resources": "^2.4.0",
     "@opentelemetry/semantic-conventions": "^1.39.0",
-    "@opentelemetry/instrumentation": "^0.210.0",
-    "@opentelemetry/instrumentation-winston": "^0.54.0",
-    "@opentelemetry/winston-transport": "^0.20.0",
+    "@opentelemetry/instrumentation": "^0.211.0",
+    "@opentelemetry/instrumentation-winston": "^0.55.0",
+    "@opentelemetry/winston-transport": "^0.21.0",
     "winston": "^3.19.0",
     "flat": "^6.0.1"
   }
