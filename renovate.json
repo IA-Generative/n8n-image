@@ -55,7 +55,7 @@
       },
       "major": {
         "automerge": false
-      },
+      }
     },
     {
       "description": "n8n-runners base image in n8n-runners/Dockerfile",
@@ -88,7 +88,7 @@
       },
       "major": {
         "automerge": false
-      },
+      }
     },
     {
       "description": "OpenTelemetry dependencies in global/package.json",

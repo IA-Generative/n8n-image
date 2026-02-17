@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - develop
+      - v*
     paths:
       - 'n8n/**'
       - 'n8n-runners/**'
