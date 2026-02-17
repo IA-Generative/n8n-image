@@ -1,4 +1,4 @@
-FROM n8nio/runners:1.123.20
+FROM n8nio/runners:2.8.3
 
 COPY ../nodes/ /home/node/.n8n/nodes
 RUN [[ -d /home/node/.n8n/nodes/node_modules ]] || exit 1
