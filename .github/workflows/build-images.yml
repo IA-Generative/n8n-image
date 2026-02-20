@@ -6,8 +6,7 @@ on:
       - main
       - develop
     paths:
-      - 'n8n/**'
-      - 'n8n-runners/**'
+      - '**/Dockerfile'
       - '*.js'
       - '**/package.json'
       - '**/package-lock.json'
@@ -21,11 +20,61 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      n8n: ${{ steps.filter.outputs.n8n || steps.schedule.outputs.all }}
+      n8n-runners: ${{ steps.filter.outputs.n8n-runners || steps.schedule.outputs.all }}
+      playwright-mcp: ${{ steps.filter.outputs.playwright-mcp || steps.schedule.outputs.all }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Check if scheduled or manual run
+        id: schedule
+        run: |
+          if [[ "${{ github.event_name }}" == "schedule" || "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "all=true" >> $GITHUB_OUTPUT
+          else
+            echo "all=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Detect changed paths
+        uses: dorny/paths-filter@v3
+        if: github.event_name != 'schedule' && github.event_name != 'workflow_dispatch'
+        id: filter
+        with:
+          filters: |
+            n8n:
+              - 'n8n/**'
+              - 'global/**'
+              - 'nodes/**'
+              - 'n8n-otel-instrumentation.js'
+              - 'tracing.js'
+              - '.github/workflows/build-images.yml'
+            n8n-runners:
+              - 'n8n-runners/**'
+              - 'global/**'
+              - 'nodes/**'
+              - 'n8n-otel-instrumentation.js'
+              - 'tracing.js'
+              - '.github/workflows/build-images.yml'
+            playwright-mcp:
+              - 'playwright-mcp/**'
+              - '.github/workflows/build-images.yml'
+
   build:
+    needs: detect-changes
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+    if: |
+      github.event_name == 'schedule' || 
+      github.event_name == 'workflow_dispatch' ||
+      needs.detect-changes.outputs.n8n == 'true' ||
+      needs.detect-changes.outputs.n8n-runners == 'true' ||
+      needs.detect-changes.outputs.playwright-mcp == 'true'
     
     strategy:
       matrix:
@@ -33,76 +82,82 @@ jobs:
           - name: n8n
             context: .
             dockerfile: n8n/Dockerfile
-            image_source: https://github.com/ia-generative/n8n
-            tags: |
-              ghcr.io/ia-generative/n8n:latest
-              ghcr.io/ia-generative/n8n:${{ github.sha }}
+            changed: ${{ needs.detect-changes.outputs.n8n }}
           - name: n8n-runners
             context: .
             dockerfile: n8n-runners/Dockerfile
-            image_source: https://github.com/ia-generative/n8n-runners
-            tags: |
-              ghcr.io/ia-generative/n8n-runners:latest
-              ghcr.io/ia-generative/n8n-runners:${{ github.sha }}
+            changed: ${{ needs.detect-changes.outputs.n8n-runners }}
+          - name: playwright-mcp
+            context: .
+            dockerfile: playwright-mcp/Dockerfile
+            changed: ${{ needs.detect-changes.outputs.playwright-mcp }}
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       
       - name: Install nodes dependencies
+        if: |
+          (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || matrix.changed == 'true') &&
+          (matrix.name == 'n8n' || matrix.name == 'n8n-runners')
         run: |
           cd nodes
           npm install
       
       - name: Extract version from Dockerfile
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || matrix.changed == 'true'
         id: version
         run: |
-          VERSION=$(grep -oP '^FROM.*:\K[0-9]+\.[0-9]+\.[0-9]+' ${{ matrix.dockerfile }})
+          IMAGE_NAME=$(grep -oP '^# Image name:\s*\K[^\s]+' ${{ matrix.dockerfile }})
+          IMAGE_SUFFIX=$(grep -oP '^# Image suffix:\s*\K[^\s]+' ${{ matrix.dockerfile }} || echo "")
+          # Get the line after the image name comment and extract the tag
+          VERSION=$(grep -A1 '^# Image name:' ${{ matrix.dockerfile }} | tail -n1 | grep -oP ':[^\s]+')
           SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "version_with_sha=${VERSION}-${SHORT_SHA}" >> $GITHUB_OUTPUT
-          echo "Extracted version: $VERSION"
-          echo "Version with SHA: ${VERSION}-${SHORT_SHA}"
+          
+          if [[ -n "$IMAGE_SUFFIX" ]]; then
+            FULL_TAG=${IMAGE_NAME}${VERSION}-${IMAGE_SUFFIX}
+            FULL_TAG_WITH_SHA=${IMAGE_NAME}${VERSION}-${IMAGE_SUFFIX}-${SHORT_SHA}
+          else
+            FULL_TAG=${IMAGE_NAME}${VERSION}
+            FULL_TAG_WITH_SHA=${IMAGE_NAME}${VERSION}-${SHORT_SHA}
+          fi
+
+          echo "version=$FULL_TAG" >> $GITHUB_OUTPUT
+          echo "version_with_sha=${FULL_TAG_WITH_SHA}" >> $GITHUB_OUTPUT
+          echo "Tag name: ${FULL_TAG}"
+          echo "Tag name with SHA: ${FULL_TAG_WITH_SHA}"
       
       - name: Set up Docker Buildx
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || matrix.changed == 'true'
         uses: docker/setup-buildx-action@v3
       
       - name: Log in to GitHub Container Registry
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || matrix.changed == 'true'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/ia-generative/${{ matrix.name }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,value=${{ steps.version.outputs.version }}
-            type=raw,value=${{ steps.version.outputs.version_with_sha }}
-          labels: |
-            org.opencontainers.image.source=${{ matrix.image_source }}
-            org.opencontainers.image.title=${{ matrix.name }}
-            org.opencontainers.image.description=Custom n8n image with OpenTelemetry instrumentation
-            org.opencontainers.image.version=${{ steps.version.outputs.version }}
-      
+
       - name: Build and push Docker image
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || matrix.changed == 'true'
         uses: docker/build-push-action@v5
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            ghcr.io/ia-generative/${{ steps.version.outputs.version }}
+            ghcr.io/ia-generative/${{ steps.version.outputs.version_with_sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/ia-generative/n8n-image
+            org.opencontainers.image.title=${{ steps.version.outputs.version }}
+            org.opencontainers.image.description=Custom n8n image with OpenTelemetry instrumentation
+            org.opencontainers.image.version=${{ steps.version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64
       
       - name: Image digest
-        run: echo "Image built successfully for ${{ matrix.name }}"
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || matrix.changed == 'true'
+        run: echo "Image built successfully for ${{ steps.version.outputs.version }}"

@@ -1,3 +1,4 @@
+# Image name: n8n
 FROM n8nio/n8n:1.123.20
 
 USER root
