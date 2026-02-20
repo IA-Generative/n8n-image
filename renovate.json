@@ -200,6 +200,40 @@
       "major": {
         "automerge": false
       }
+    },
+    {
+      "description": "Playwright Docker images in playwright-mcp/Dockerfile",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "mcr.microsoft.com/playwright",
+        "mcr.microsoft.com/playwright/mcp"
+      ],
+      "groupName": "Playwright Docker images",
+      "automerge": false,
+      "schedule": [
+        "before 6am on monday"
+      ],
+      "commitMessagePrefix": "⬆️ ",
+      "commitMessageTopic": "Playwright Docker images",
+      "commitMessageExtra": "to {{newVersion}}",
+      "labels": [
+        "dependencies",
+        "docker",
+        "playwright"
+      ],
+      "prPriority": 5,
+      "minimumReleaseAge": "3 days",
+      "patch": {
+        "automerge": true
+      },
+      "minor": {
+        "automerge": true
+      },
+      "major": {
+        "automerge": false
+      }
     }
   ],
   "prConcurrentLimit": 11,
