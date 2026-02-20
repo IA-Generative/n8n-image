@@ -9,7 +9,7 @@ RUN npx --yes playwright@1.58.0-alpha-2026-01-07 install chromium
 
 # Image suffix: chromium
 # Image name: playwright-mcp
-FROM mcr.microsoft.com/playwright/mcp:v0.0.67
+FROM mcr.microsoft.com/playwright/mcp:v0.0.68
 
 ENV XDG_RUNTIME_DIR=/tmp/.chromium
 ENV XDG_CACHE_HOME=/tmp/.chromium
