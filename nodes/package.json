@@ -1,9 +1,10 @@
 {
-  "name": "n8n-otel-dependencies",
+  "name": "n8n-nodes",
   "version": "1.0.0",
   "description": "Nodes dependencies for n8n",
   "private": true,
   "dependencies": {
-    "n8n-nodes-imap": "^2.14.0"
+    "n8n-nodes-imap": "^2.14.0",
+    "playwright": "^1.58.2"
   }
 }
