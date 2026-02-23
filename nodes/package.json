@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "n8n-nodes-imap": "^2.14.0",
-    "playwright-core": "^1.58.2"
+    "playwright-core": "^1.58.2",
+    "stringz": "^2.1.0"
   }
 }
