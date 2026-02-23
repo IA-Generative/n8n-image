@@ -47,14 +47,12 @@ jobs:
           filters: |
             n8n:
               - 'n8n/**'
-              - 'global/**'
               - 'nodes/**'
               - 'n8n-otel-instrumentation.js'
               - 'tracing.js'
               - '.github/workflows/build-images.yml'
             n8n-runners:
               - 'n8n-runners/**'
-              - 'global/**'
               - 'nodes/**'
               - 'n8n-otel-instrumentation.js'
               - 'tracing.js'
