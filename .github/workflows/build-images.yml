@@ -25,7 +25,7 @@ jobs:
     outputs:
       n8n: ${{ steps.filter.outputs.n8n || steps.schedule.outputs.all }}
       n8n-runners: ${{ steps.filter.outputs.n8n-runners || steps.schedule.outputs.all }}
-      playwright-mcp: ${{ steps.filter.outputs.playwright-mcp || steps.schedule.outputs.all }}
+      playwright: ${{ steps.filter.outputs.playwright || steps.schedule.outputs.all }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -59,8 +59,8 @@ jobs:
               - 'n8n-otel-instrumentation.js'
               - 'tracing.js'
               - '.github/workflows/build-images.yml'
-            playwright-mcp:
-              - 'playwright-mcp/**'
+            playwright:
+              - 'playwright/**'
               - '.github/workflows/build-images.yml'
 
   build:
@@ -74,7 +74,7 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       needs.detect-changes.outputs.n8n == 'true' ||
       needs.detect-changes.outputs.n8n-runners == 'true' ||
-      needs.detect-changes.outputs.playwright-mcp == 'true'
+      needs.detect-changes.outputs.playwright == 'true'
     
     strategy:
       matrix:
@@ -87,10 +87,10 @@ jobs:
             context: .
             dockerfile: n8n-runners/Dockerfile
             changed: ${{ needs.detect-changes.outputs.n8n-runners }}
-          - name: playwright-mcp
+          - name: playwright
             context: .
-            dockerfile: playwright-mcp/Dockerfile
-            changed: ${{ needs.detect-changes.outputs.playwright-mcp }}
+            dockerfile: playwright/Dockerfile
+            changed: ${{ needs.detect-changes.outputs.playwright }}
     
     steps:
       - name: Checkout repository

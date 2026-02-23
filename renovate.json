@@ -202,13 +202,12 @@
       }
     },
     {
-      "description": "Playwright Docker images in playwright-mcp/Dockerfile",
+      "description": "Playwright Docker images in playwright/Dockerfile",
       "matchDatasources": [
         "docker"
       ],
       "matchPackageNames": [
-        "mcr.microsoft.com/playwright",
-        "mcr.microsoft.com/playwright/mcp"
+        "mcr.microsoft.com/playwright"
       ],
       "groupName": "Playwright Docker images",
       "automerge": false,
