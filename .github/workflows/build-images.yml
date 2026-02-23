@@ -32,28 +32,6 @@ jobs:
           else
             echo "all=false" >> $GITHUB_OUTPUT
           fi
-      
-      - name: Detect changed paths
-        uses: dorny/paths-filter@v3
-        if: github.event_name != 'schedule' && github.event_name != 'workflow_dispatch'
-        id: filter
-        with:
-          filters: |
-            n8n:
-              - 'n8n/**'
-              - 'nodes/**'
-              - 'n8n-otel-instrumentation.js'
-              - 'tracing.js'
-              - '.github/workflows/build-images.yml'
-            n8n-runners:
-              - 'n8n-runners/**'
-              - 'nodes/**'
-              - 'n8n-otel-instrumentation.js'
-              - 'tracing.js'
-              - '.github/workflows/build-images.yml'
-            playwright:
-              - 'playwright/**'
-              - '.github/workflows/build-images.yml'
 
   build:
     needs: detect-changes
@@ -61,43 +39,30 @@ jobs:
     permissions:
       contents: read
       packages: write
-    if: |
-      github.event_name == 'schedule' || 
-      github.event_name == 'workflow_dispatch' ||
-      needs.detect-changes.outputs.n8n == 'true' ||
-      needs.detect-changes.outputs.n8n-runners == 'true' ||
-      needs.detect-changes.outputs.playwright == 'true'
-    
     strategy:
       matrix:
         include:
           - name: n8n
             context: .
             dockerfile: n8n/Dockerfile
-            changed: ${{ needs.detect-changes.outputs.n8n }}
           - name: n8n-runners
             context: .
             dockerfile: n8n-runners/Dockerfile
-            changed: ${{ needs.detect-changes.outputs.n8n-runners }}
           - name: playwright
             context: .
             dockerfile: playwright/Dockerfile
-            changed: ${{ needs.detect-changes.outputs.playwright }}
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       
       - name: Install nodes dependencies
-        if: |
-          (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || matrix.changed == 'true') &&
-          (matrix.name == 'n8n' || matrix.name == 'n8n-runners')
+        if: matrix.name == 'n8n'
         run: |
           cd nodes
           npm install
       
       - name: Extract version from Dockerfile
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || matrix.changed == 'true'
         id: version
         run: |
           IMAGE_NAME=$(grep -oP '^# Image name:\s*\K[^\s]+' ${{ matrix.dockerfile }})
@@ -120,11 +85,9 @@ jobs:
           echo "Tag name with SHA: ${FULL_TAG_WITH_SHA}"
       
       - name: Set up Docker Buildx
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || matrix.changed == 'true'
         uses: docker/setup-buildx-action@v3
       
       - name: Log in to GitHub Container Registry
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || matrix.changed == 'true'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
@@ -132,7 +95,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || matrix.changed == 'true'
         uses: docker/build-push-action@v5
         with:
           context: ${{ matrix.context }}
@@ -151,5 +113,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
       
       - name: Image digest
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || matrix.changed == 'true'
         run: echo "Image built successfully for ${{ steps.version.outputs.version }}"
