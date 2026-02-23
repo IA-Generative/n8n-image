@@ -7,4 +7,5 @@ ENV XDG_RUNTIME_DIR=/tmp/.chromium
 ENV XDG_CACHE_HOME=/tmp/.chromium
 ENV NPM_CONFIG_CACHE=/tmp/.npm
 
+RUN npm i --yes playwright
 RUN npx --yes playwright install chromium
