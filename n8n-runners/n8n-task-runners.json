@@ -6,6 +6,14 @@
         "NODE_FUNCTION_ALLOW_BUILTIN": "crypto",
         "NODE_FUNCTION_ALLOW_EXTERNAL": "playwright-core"
       }
+    },
+    {
+      "runner-type": "python",
+      "env-overrides": {
+        "PYTHONPATH": "/opt/runners/task-runner-python",
+        "N8N_RUNNERS_STDLIB_ALLOW": "",
+        "N8N_RUNNERS_EXTERNAL_ALLOW": ""
+      }
     }
   ]
 }
