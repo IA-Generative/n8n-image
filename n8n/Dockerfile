@@ -15,8 +15,8 @@ RUN echo "Installing required packages..." && \
     echo "Curl installed successfully: $(curl --version | head -n 1)" && \
     echo "Envsubst installed successfully: $(envsubst --version | head -n 1)"
 
-COPY ../nodes/ /home/node/.n8n/nodes
-RUN [[ -d /home/node/.n8n/nodes/node_modules ]] || exit 1
+COPY ../nodes/* /home/node/.n8n/nodes
+RUN [[ -d /home/node/.n8n/node_modules ]] || exit 1
 
 # # Switch to n8n's installation directory
 # WORKDIR /usr/local/lib/node_modules/n8n
