@@ -1,5 +1,5 @@
 # Image name: n8n-runners
-FROM n8nio/runners:1.123.21 
+FROM n8nio/runners:1.123.23 
 
 USER root
 RUN cd /opt/runners/task-runner-javascript && pnpm add playwright-core
