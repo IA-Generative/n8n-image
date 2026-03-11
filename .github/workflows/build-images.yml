@@ -5,6 +5,14 @@ on:
     branches:
       - main
       - develop
+      - v*
+    paths:
+      - 'n8n/**'
+      - 'n8n-runners/**'
+      - '*.js'
+      - '**/package.json'
+      - '**/package-lock.json'
+      - '.github/workflows/build-images.yml'
   workflow_dispatch:
   schedule:
     # Rebuild weekly on Monday at 3am to ensure images are up-to-date
