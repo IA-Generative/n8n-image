@@ -1,7 +1,4 @@
-FROM n8nio/runners:2.8.3
+# Image name: n8n-runners
+FROM n8nio/runners:1.123.23 
 
-COPY ../nodes/ /home/node/.n8n/nodes
-RUN [[ -d /home/node/.n8n/nodes/node_modules ]] || exit 1
-
-# Set image repository label
-LABEL org.opencontainers.image.source="https://github.com/ia-generative/n8n-runners"
+LABEL org.opencontainers.image.source="https://github.com/ia-generative/n8n-image"

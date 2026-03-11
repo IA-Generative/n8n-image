@@ -1,5 +1,5 @@
 {
-  "name": "n8n-otel-dependencies",
+  "name": "n8n-nodes",
   "version": "1.0.0",
   "description": "Nodes dependencies for n8n",
   "private": true,

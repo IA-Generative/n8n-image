@@ -96,7 +96,6 @@ build-n8n-runners:
   stage: docker-build
   needs:
     - read_secret
-    - prepare-nodes
     - extract-version-runners
   extends:
     - .kaniko:build-push
