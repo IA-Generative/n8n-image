@@ -2,7 +2,7 @@
 # FROM ghcr.io/jqlang/jq AS jq
 
 # Image name: n8n-runners
-FROM ghcr.io/ia-generative/n8n-runners:2.8.3
+FROM n8nio/runners:2.8.3
 
 # --- FEATURE with playwright-core 
 # USER root
