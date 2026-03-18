@@ -1,5 +1,5 @@
 # Image name: n8n
-FROM n8nio/n8n:1.123.23
+FROM n8nio/n8n:2.12.2
 
 USER root
 
