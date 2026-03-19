@@ -1,4 +1,5 @@
 # Image name: n8n
+# Image suffix: playwright
 FROM n8nio/n8n:2.8.3
 
 USER root
