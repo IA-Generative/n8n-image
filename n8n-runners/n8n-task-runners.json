@@ -3,7 +3,7 @@
     {
       "runner-type": "javascript",
       "env-overrides": {
-        "NODE_FUNCTION_ALLOW_BUILTIN": "crypto",
+        "NODE_FUNCTION_ALLOW_BUILTIN": "crypto,http",
         "NODE_FUNCTION_ALLOW_EXTERNAL": "playwright-core",
         "N8N_RUNNERS_LAUNCHER_HEALTH_CHECK_PORT": "5680"
       }
