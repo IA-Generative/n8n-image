@@ -11,7 +11,7 @@ COPY --from=jq /jq /usr/local/bin/jq
 
 # RUN cd /opt/runners/task-runner-javascript && pnpm add moment playwright-core
 # RUN jq '(.["task-runners"][] | select(.["runner-type"] == "javascript") | .["env-overrides"]) += {"NODE_FUNCTION_ALLOW_EXTERNAL": "moment,playwright-core"}' /etc/n8n-task-runners.json > /tmp/json && mv /tmp/json /etc/n8n-task-runners.json
-RUN jq '(.["task-runners"][] | select(.["runner-type"] == "javascript") | .["env-overrides"]) += {"NODE_FUNCTION_ALLOW_BUILTIN": "crypto,http"}' /etc/n8n-task-runners.json > /tmp/json && mv /tmp/json /etc/n8n-task-runners.json
+RUN jq '(.["task-runners"][] | select(.["runner-type"] == "javascript") | .["env-overrides"]) += {"NODE_FUNCTION_ALLOW_EXTERNAL": "axios,node-fetch"}' /etc/n8n-task-runners.json > /tmp/json && mv /tmp/json /etc/n8n-task-runners.json
 # --- END FEATURE with playwright-core
 
 # USER runner
