@@ -3,7 +3,7 @@
 
 # Image name: n8n-runners
 # Image suffix: axios
-FROM n8nio/runners:2.12.3
+FROM n8nio/runners:2.13.4
 
 # --- FEATURE with playwright-core 
 # USER root
