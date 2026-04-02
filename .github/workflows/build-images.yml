@@ -7,12 +7,8 @@ on:
       - develop
       - v*
     paths:
-      - 'n8n/**'
-      - 'n8n-runners/**'
-      - '*.js'
-      - '**/package.json'
-      - '**/package-lock.json'
-      - '.github/workflows/build-images.yml'
+      - main
+      - develop      
   workflow_dispatch:
   schedule:
     # Rebuild weekly on Monday at 3am to ensure images are up-to-date
@@ -27,6 +23,7 @@ jobs:
     outputs:
       n8n: ${{ steps.filter.outputs.n8n || steps.schedule.outputs.all }}
       n8n-runners: ${{ steps.filter.outputs.n8n-runners || steps.schedule.outputs.all }}
+      playwright: ${{ steps.filter.outputs.playwright || steps.schedule.outputs.all }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -55,6 +52,9 @@ jobs:
           - name: n8n-runners
             context: .
             dockerfile: n8n-runners/Dockerfile
+          - name: playwright
+            context: .
+            dockerfile: playwright/Dockerfile
     
     steps:
       - name: Checkout repository
