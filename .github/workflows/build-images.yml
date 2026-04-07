@@ -5,14 +5,7 @@ on:
     branches:
       - main
       - develop
-      - v*
-    paths:
-      - 'n8n/**'
-      - 'n8n-runners/**'
-      - '*.js'
-      - '**/package.json'
-      - '**/package-lock.json'
-      - '.github/workflows/build-images.yml'
+      - v*      
   workflow_dispatch:
   schedule:
     # Rebuild weekly on Monday at 3am to ensure images are up-to-date
@@ -55,6 +48,16 @@ jobs:
           - name: n8n-runners
             context: .
             dockerfile: n8n-runners/Dockerfile
+          - name: playwright-chromium
+            context: .
+            dockerfile: playwright/Dockerfile
+            build_args: BROWSER=chromium
+            image_suffix: chromium
+          - name: playwright-firefox
+            context: .
+            dockerfile: playwright/Dockerfile
+            build_args: BROWSER=firefox
+            image_suffix: firefox
     
     steps:
       - name: Checkout repository
@@ -70,7 +73,12 @@ jobs:
         id: version
         run: |
           IMAGE_NAME=$(grep -oP '^# Image name:\s*\K[^\s]+' ${{ matrix.dockerfile }})
-          IMAGE_SUFFIX=$(grep -oP '^# Image suffix:\s*\K[^\s]+' ${{ matrix.dockerfile }} || echo "")
+          # Use matrix image_suffix if provided, otherwise fall back to Dockerfile comment
+          if [[ -n "${{ matrix.image_suffix }}" ]]; then
+            IMAGE_SUFFIX="${{ matrix.image_suffix }}"
+          else
+            IMAGE_SUFFIX=$(grep -oP '^# Image suffix:\s*\K[^\s]+' ${{ matrix.dockerfile }} || echo "")
+          fi
           # Extract the version tag from the FROM line (e.g. FROM n8nio/n8n:2.8.3 -> :2.8.3)
           VERSION=$(grep -oP '^FROM\s+\S+\K:[^\s]+' ${{ matrix.dockerfile }} | tail -n1)
           SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
@@ -103,6 +111,7 @@ jobs:
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
+          build-args: ${{ matrix.build_args }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
             ghcr.io/ia-generative/${{ steps.version.outputs.version }}
