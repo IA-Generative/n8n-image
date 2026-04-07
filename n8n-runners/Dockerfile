@@ -2,7 +2,6 @@
 # FROM ghcr.io/jqlang/jq AS jq
 
 # Image name: n8n-runners
-# Image suffix: axios
 FROM n8nio/runners:2.13.4
 
 # --- FEATURE with playwright-core 
