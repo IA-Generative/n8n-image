@@ -48,16 +48,9 @@ jobs:
           - name: n8n-runners
             context: .
             dockerfile: n8n-runners/Dockerfile
-          - name: playwright-chromium
+          - name: playwright
             context: .
             dockerfile: playwright/Dockerfile
-            build_args: BROWSER=chromium
-            image_suffix: chromium
-          - name: playwright-firefox
-            context: .
-            dockerfile: playwright/Dockerfile
-            build_args: BROWSER=firefox
-            image_suffix: firefox
     
     steps:
       - name: Checkout repository
