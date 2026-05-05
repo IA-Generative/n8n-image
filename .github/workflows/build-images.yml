@@ -5,7 +5,10 @@ on:
     branches:
       - main
       - develop
-      - v*      
+      - v*
+    paths:
+      - main
+      - develop      
   workflow_dispatch:
   schedule:
     # Rebuild weekly on Monday at 3am to ensure images are up-to-date
@@ -20,6 +23,7 @@ jobs:
     outputs:
       n8n: ${{ steps.filter.outputs.n8n || steps.schedule.outputs.all }}
       n8n-runners: ${{ steps.filter.outputs.n8n-runners || steps.schedule.outputs.all }}
+      playwright: ${{ steps.filter.outputs.playwright || steps.schedule.outputs.all }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
