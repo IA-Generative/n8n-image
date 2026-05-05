@@ -73,7 +73,7 @@ extract-version-playwright:
   image: alpine:latest
   script:
     - apk add --no-cache grep
-    - VERSION=$(grep -oP '^FROM.*:\K[0-9]+\.[0-9]+\.[0-9]+.*' playwright/Dockerfile)
+    - VERSION=$(grep -oP '^FROM.*:\Kv[0-9]+\.[0-9]+\.[0-9]+-\w+' playwright/Dockerfile)
     - echo "PLAYWRIGHT_VERSION=$VERSION" > version-playwright.env
     - echo "PLAYWRIGHT_VERSION_SHA=${VERSION}-${CI_COMMIT_SHORT_SHA}" >> version-playwright.env
     - echo "Extracted playwright version:" $VERSION
@@ -129,7 +129,7 @@ build-playwright:
   stage: docker-build
   needs:
     - read_secret
-    - extract-version
+    - extract-version-playwright
   extends:
     - .kaniko:build-push
   rules:
