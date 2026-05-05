@@ -1,5 +1,5 @@
 # Image name: playwright
-FROM mcr.microsoft.com/playwright:v1.58.2-jammy
+FROM mcr.microsoft.com/playwright:v1.59.1-jammy
 
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 ENV XDG_RUNTIME_DIR=/tmp/.runtime
